@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:3000']);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -77,7 +77,6 @@ app.post("/api/upload", upload.single('file'), async (req, res) => {
             await new Promise((resolve, reject) => {
                 db.query(insertQuery, [batch], (err, result) => {
                     if (err) {
-                        console.error('Error inserting data:', err);
                         reject(err);
                     } else {
                         resolve(result);
@@ -87,7 +86,6 @@ app.post("/api/upload", upload.single('file'), async (req, res) => {
         }
         res.status(200).send('File uploaded and data inserted successfully');
     } catch (error) {
-        console.log(error);
         res.status(500).send('Error inserting data.');
     } finally {
         fs.unlink(file.path, (err) => {
@@ -131,7 +129,6 @@ app.get("/api/getChartData", async (req, res) => {
             chartInfo: data[0],
         });
     } catch (err) {
-        console.log(err);
         res.status(500).json({
             message: "Something went wrong please contact to admin.",
             error: err
@@ -170,7 +167,6 @@ app.get('/api/export', async (req, res) => {
 
         res.download(filePath, 'Report.xlsx', (err) => {
             if (err) {
-                console.error('Error sending file:', err);
                 res.status(500).send('Error sending file.');
             } else {
                 fs.unlink(filePath, (err) => {
@@ -181,7 +177,6 @@ app.get('/api/export', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error exporting data:', error);
         res.status(500).send('Error exporting data.');
     }
 });
